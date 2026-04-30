@@ -13,19 +13,15 @@ PostgreSQL (Neon)
 JWT + bcrypt
 Jest + Supertest
 Docker
-
 📌 Features
-Autenticação JWT (login e registro)
-CRUD de clientes
-CRUD de agendamentos
-Hash de senha com bcrypt
-Testes automatizados
-Arquitetura em camadas (controller/service)
-
+- Autenticação JWT (login e registro)
+- CRUD de clientes
+- CRUD de agendamentos
+- Hash de senha com bcrypt
+- Testes automatizados
+- Arquitetura em camadas (controller/service)
 🌐 Production
 https://api-ts-xlri.onrender.com
-
-
 🧱 Project Structure
 src/
   controllers/
@@ -33,27 +29,23 @@ src/
   routes/
   middlewares/
   database/
-tests/
 
+tests/
 ▶️ Running Locally
 npm install
 npx prisma generate
 npm test
 npm start
-
 🧪 Tests
 npm test
 11 test cases
 auth
 clients
 appointments
-
 🐳 Docker
 docker compose up --build
-
 📌 Status
 production-ready
-
 👨‍💻 Author
 
 Guilherme
