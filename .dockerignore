@@ -1,0 +1,3 @@
+echo node_modules > .dockerignore
+echo dist >> .dockerignore
+echo .env >> .dockerignore

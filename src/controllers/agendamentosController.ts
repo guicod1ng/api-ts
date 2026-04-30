@@ -28,6 +28,7 @@ export const criar = async (req: Request, res: Response) => {
 
     res.status(201).json(novo);
   } catch (erro) {
+    console.log("ERRO AGENDAMENTO:", erro);
     res.status(500).json({ erro: "Erro ao criar agendamento" });
   }
 };

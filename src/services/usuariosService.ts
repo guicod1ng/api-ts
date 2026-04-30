@@ -1,15 +1,12 @@
-import pool from "../config/db";
-import { Usuario } from "../models/usuarios";
+import prisma from "../config/prisma";
 
-export const buscarPorEmail = async (email: string): Promise<Usuario | null> => {
-  const resultado = await pool.query("SELECT * FROM usuarios WHERE email = $1", [email]);
-  return resultado.rows[0] || null;
+export const buscarPorEmail = async (email: string) => {
+  return prisma.usuarios.findUnique({ where: { email } });
 };
 
-export const criar = async (email: string, senhaHash: string): Promise<Usuario> => {
-  const resultado = await pool.query(
-    "INSERT INTO usuarios (email, senha) VALUES ($1, $2) RETURNING id, email",
-    [email, senhaHash]
-  );
-  return resultado.rows[0];
+export const criar = async (email: string, senhaHash: string) => {
+  return prisma.usuarios.create({
+    data: { email, senha: senhaHash },
+    select: { id: true, email: true },
+  });
 };

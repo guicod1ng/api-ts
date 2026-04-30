@@ -1,22 +1,27 @@
-import pool from "../config/db";
-import { Cliente } from "../models/clientes";
+import prisma from "../config/prisma";
 
-export const listar = async (usuario_id: number): Promise<Cliente[]> => {
-  const resultado = await pool.query(
-    "SELECT * FROM clientes WHERE usuario_id = $1 ORDER BY id",
-    [usuario_id]
-  );
-  return resultado.rows;
+export const listar = async (usuario_id: number) => {
+  return prisma.clientes.findMany({
+    where: { usuario_id },
+    orderBy: { id: "asc" },
+  });
 };
 
-export const criar = async (
-  nome: string,
-  telefone: string,
-  usuario_id: number
-): Promise<Cliente> => {
-  const resultado = await pool.query(
-    "INSERT INTO clientes (nome, telefone, usuario_id) VALUES ($1, $2, $3) RETURNING *",
-    [nome, telefone, usuario_id]
-  );
-  return resultado.rows[0];
+export const criar = async (nome: string, telefone: string, usuario_id: number) => {
+  return prisma.clientes.create({
+    data: { nome, telefone, usuario_id },
+  });
+};
+
+export const atualizar = async (id: number, nome: string, telefone: string, usuario_id: number) => {
+  return prisma.clientes.updateMany({
+    where: { id, usuario_id },
+    data: { nome, telefone },
+  });
+};
+
+export const deletar = async (id: number, usuario_id: number) => {
+  return prisma.clientes.deleteMany({
+    where: { id, usuario_id },
+  });
 };

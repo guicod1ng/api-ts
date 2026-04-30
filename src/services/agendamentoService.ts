@@ -1,45 +1,36 @@
-import pool from "../config/db";
-import { Agendamento } from "../models/Agendamento";
+import prisma from "../config/prisma";
 
-export const listar = async (usuario_id: number): Promise<Agendamento[]> => {
-  const resultado = await pool.query(
-    `SELECT a.*, c.nome AS cliente_nome
-     FROM agendamentos a
-     JOIN clientes c ON a.cliente_id = c.id
-     WHERE c.usuario_id = $1
-     ORDER BY a.data, a.hora`,
-    [usuario_id]
-  );
-  return resultado.rows;
+export const listar = async (usuario_id: number) => {
+  return prisma.agendamentos.findMany({
+    where: { clientes: { usuario_id } },
+    include: { clientes: { select: { nome: true } } },
+    orderBy: [{ data: "asc" }, { hora: "asc" }],
+  });
 };
 
-export const criar = async (
-  cliente_id: number,
-  data: string,
-  hora: string,
-  servico: string,
-  usuario_id: number
-): Promise<Agendamento | null> => {
-  const resultado = await pool.query(
-    `INSERT INTO agendamentos (cliente_id, data, hora, servico)
-     SELECT $1, $2, $3, $4
-     FROM clientes
-     WHERE id = $1 AND usuario_id = $5
-     RETURNING *`,
-    [cliente_id, data, hora, servico, usuario_id]
-  );
-  return resultado.rows[0] || null;
+export const criar = async (cliente_id: number, data: string, hora: string, servico: string, usuario_id: number) => {
+  const cliente = await prisma.clientes.findFirst({
+    where: { id: cliente_id, usuario_id },
+  });
+
+  if (!cliente) return null;
+
+  return prisma.agendamentos.create({
+    data: { 
+      cliente_id,
+       data: new Date(data),
+       hora: new Date(`1970-01-01T${hora}:00`), 
+       servico 
+      },
+  });
 };
 
-export const excluir = async (id: number, usuario_id: number): Promise<Agendamento | null> => {
-  const resultado = await pool.query(
-    `DELETE FROM agendamentos a
-     USING clientes c
-     WHERE a.cliente_id = c.id
-       AND a.id = $1
-       AND c.usuario_id = $2
-     RETURNING a.*`,
-    [id, usuario_id]
-  );
-  return resultado.rows[0] || null;
+export const excluir = async (id: number, usuario_id: number) => {
+  const agendamento = await prisma.agendamentos.findFirst({
+    where: { id, clientes: { usuario_id } },
+  });
+
+  if (!agendamento) return null;
+
+  return prisma.agendamentos.delete({ where: { id } });
 };
