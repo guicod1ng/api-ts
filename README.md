@@ -23,6 +23,9 @@ npx prisma generate
 npm test
 npm start
 
+## 🌐 Deploy
+Disponível em: https://api-ts-xlri.onrender.com
+
 ✅ Testes
 bash
 npm test
